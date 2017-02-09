@@ -1,27 +1,17 @@
 const { symbolTimes } = require('./util');
 
-//TODO: try to make smaller? maybe?
 const obfuscateSymbol = symbol => {
-  let last  = '';
-  let index = 0;
-  let count = 1;
-  return symbol.split('').reduce((out, e) => {
-    if (last === e) {
-      count++;
+  if(!/[\.\-]+/.test(symbol)) return symbol;
+
+  let match = symbol.match(/(\.+|\-+)/g);
+
+  return match.reduce((out,e)=>{
+    let count = e.length;
+    if(e[0] === '.') {
+      out.push(count);
     } else {
-      index++;
-      count = 1;
+      out.push(String.fromCharCode(count + 64));
     }
-    last = e;
-    
-    if (e === '.') {
-      out[index] = count; // this could go above 9 with invalid input
-    } else if (e === '-') {
-      out[index] = String.fromCharCode(count + 64);
-    } else {
-      out[++index] = e;
-    }
-    
     return out;
   }, []).join('');
 };
